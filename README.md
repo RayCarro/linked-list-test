@@ -4,4 +4,4 @@ The container class is in `linkedlist2024.h`, the tests are in `linkedlist2024.c
 
 To compile and run just do `cmake . && make && make test` or just check the results in Github Actions.
 
-![Tests Status](https://github.com/RayCarro/linked-list-test/actions/workflows/commit.yml/badge.svg)
+[![Tests status](https://github.com/RayCarro/linked-list-test/actions/workflows/commit.yml/badge.svg)](https://github.com/RayCarro/linked-list-test/actions/workflows/commit.yml)
