@@ -4,6 +4,7 @@
 #include <utility>
 
 namespace LinkedList2024 {
+	
 	template<class DataType>
 	class LinkedList;
 
@@ -217,47 +218,47 @@ namespace LinkedList2024 {
 			return Iterator(_tail, true);
 		}
 
-    private:
+	private:
 		Node* _head, * _tail;
 
-        auto _insert(const Iterator& it, Node* n) {
-            assert(n != nullptr);
+		auto _insert(const Iterator& it, Node* n) {
+			assert(n != nullptr);
 
-            auto ptr = it._ptr;
+			auto ptr = it._ptr;
 
-            if (it._reverse && ptr == nullptr) {
-                n->_prev = nullptr;
-                n->_next = _head;
-            }
-            else if (it._reverse && ptr != nullptr) {
-                n->_prev = ptr->_prev;
-                n->_next = ptr;
-            }
-            else if (!it._reverse && ptr != nullptr) {
-                n->_prev = ptr;
-                n->_next = ptr->_next;
-            }
-            else {
-                // ptr is null, this is for push_back
-                n->_prev = _tail;
-                n->_next = nullptr;
-            }
+			if (it._reverse && ptr == nullptr) {
+				n->_prev = nullptr;
+				n->_next = _head;
+			}
+			else if (it._reverse && ptr != nullptr) {
+				n->_prev = ptr->_prev;
+				n->_next = ptr;
+			}
+			else if (!it._reverse && ptr != nullptr) {
+				n->_prev = ptr;
+				n->_next = ptr->_next;
+			}
+			else {
+				// ptr is null, this is for push_back
+				n->_prev = _tail;
+				n->_next = nullptr;
+			}
 
-            if (n->_prev == nullptr) {
-                _head = n;
-                _tail = n;
-            }
-            else if (n->_prev == _tail) {
-                _tail = n;
-            }
-            if (n->_prev != nullptr) {
-                n->_prev->_next = n;
-            }
-            if (n->_next != nullptr) {
-                n->_next->_prev = n;
-            }
-            return Iterator(n);
-        }
+			if (n->_prev == nullptr) {
+				_head = n;
+				_tail = n;
+			}
+			else if (n->_prev == _tail) {
+				_tail = n;
+			}
+			if (n->_prev != nullptr) {
+				n->_prev->_next = n;
+			}
+			if (n->_next != nullptr) {
+				n->_next->_prev = n;
+			}
+			return Iterator(n);
+		}
 	};
 
-};
+}; // end of namespace LinkedList2024
