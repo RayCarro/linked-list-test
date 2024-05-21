@@ -6,6 +6,7 @@
 #include <string>
 #include <assert.h>
 #include <initializer_list>
+#include <vector>
 
 using namespace std;
 using namespace LinkedList2024;

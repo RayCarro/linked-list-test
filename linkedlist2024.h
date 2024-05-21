@@ -12,21 +12,21 @@ namespace LinkedList2024 {
 
 	// class for storing nodes of the linked list
 	template<class DataType>
-	class Node
+	class LLNode
 	{
 		friend class LinkedList<DataType>;
 		friend class LLIterator<DataType>;
 
-		Node *_prev, *_next;
+		LLNode *_prev, *_next;
 		DataType _d;
 
-		Node(DataType&& value)
+		LLNode(DataType&& value)
 			: _d(std::move(value)) {
 			_prev = nullptr;
 			_next = nullptr;
 		}
 
-		Node(const DataType& value)
+		LLNode(const DataType& value)
 			: _d(value) {
 			_prev = nullptr;
 			_next = nullptr;
@@ -39,10 +39,10 @@ namespace LinkedList2024 {
 	{
 		friend class LinkedList<DataType>;
 
-		Node<DataType>* _ptr;
+		LLNode<DataType>* _ptr;
 		bool _reverse;
 
-		LLIterator(Node<DataType>* newPtr, bool reverseDirection=false) {
+		LLIterator(LLNode<DataType>* newPtr, bool reverseDirection=false) {
 			_ptr = newPtr;
 			_reverse = reverseDirection;
 		}
@@ -83,6 +83,9 @@ namespace LinkedList2024 {
 	class LinkedList
 	{
 	public:
+		using Iterator = LLIterator<DataType>;
+		using Node = LLNode<DataType>;
+
 		~LinkedList() {
 			clear();
 		}
@@ -116,14 +119,14 @@ namespace LinkedList2024 {
 		}
 
 		// insert by move
-		auto insert(LLIterator<DataType> it, DataType&& data) {
-			auto* n = new Node<DataType>(std::move(data));
+		auto insert(Iterator it, DataType&& data) {
+			auto* n = new Node(std::move(data));
 			return _insert(it, n);
 		}
 
 		// insert copy by reference
-		auto insert(LLIterator<DataType> it, const DataType& data) {
-			auto* n = new Node<DataType>(data);
+		auto insert(Iterator it, const DataType& data) {
+			auto* n = new Node(data);
 			return _insert(it, n);
 		}
 
@@ -154,8 +157,8 @@ namespace LinkedList2024 {
 		}
 
 		// erase 1 item by iterator
-		auto erase(LLIterator<DataType> it) {
-			Node<DataType>* n = it._ptr;
+		auto erase(Iterator it) {
+			Node* n = it._ptr;
 			assert(n != nullptr);
 			++it;
 			auto prev = n->_prev;
@@ -179,8 +182,8 @@ namespace LinkedList2024 {
 		}
 
 		// return iterator of first item matching value
-		LLIterator<DataType> find_first(const DataType& val) const {
-			for (LLIterator<DataType> it = begin(); it != end(); ++it) {
+		Iterator find_first(const DataType& val) const {
+			for (Iterator it = begin(); it != end(); ++it) {
 				if (*it == val) {
 					return it;
 				}
@@ -196,28 +199,28 @@ namespace LinkedList2024 {
 			return erase(rend());
 		}
 
-		LLIterator<DataType> begin() const {
-			return LLIterator<DataType>(_head);
+		Iterator begin() const {
+			return Iterator(_head);
 		}
 
-		LLIterator<DataType> end() const {
-			return LLIterator<DataType>(nullptr);
+		Iterator end() const {
+			return Iterator(nullptr);
 		}
 
 		// reverse iterator starting from beginning
-		LLIterator<DataType> rbegin() const {
-			return LLIterator<DataType>(nullptr, true);
+		Iterator rbegin() const {
+			return Iterator(nullptr, true);
 		}
 
 		// reverse iterator starting from the beginning
-		LLIterator<DataType> rend() const {
-			return LLIterator<DataType>(_tail, true);
+		Iterator rend() const {
+			return Iterator(_tail, true);
 		}
 
     private:
-        Node<DataType>* _head, * _tail;
+		Node* _head, * _tail;
 
-        auto _insert(const LLIterator<DataType>& it, Node<DataType>* n) {
+        auto _insert(const Iterator& it, Node* n) {
             assert(n != nullptr);
 
             auto ptr = it._ptr;
@@ -253,7 +256,7 @@ namespace LinkedList2024 {
             if (n->_next != nullptr) {
                 n->_next->_prev = n;
             }
-            return LLIterator<DataType>(n);
+            return Iterator(n);
         }
 	};
 
