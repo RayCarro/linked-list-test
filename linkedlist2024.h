@@ -6,14 +6,16 @@
 namespace LinkedList2024 {
 	template<class DataType>
 	class LinkedList;
-	template<class DataType>
-	class Iterator;
 
+	template<class DataType>
+	class LLIterator;
+
+	// class for storing nodes of the linked list
 	template<class DataType>
 	class Node
 	{
 		friend class LinkedList<DataType>;
-		friend class Iterator<DataType>;
+		friend class LLIterator<DataType>;
 
 		Node *_prev, *_next;
 		DataType _d;
@@ -31,22 +33,23 @@ namespace LinkedList2024 {
 		}
 	};
 
+	// iterator class
 	template<class DataType>
-	class Iterator
+	class LLIterator
 	{
 		friend class LinkedList<DataType>;
 
 		Node<DataType>* _ptr;
 		bool _reverse;
 
-		Iterator(Node<DataType>* newPtr, bool reverseDirection=false) {
+		LLIterator(Node<DataType>* newPtr, bool reverseDirection=false) {
 			_ptr = newPtr;
 			_reverse = reverseDirection;
 		}
 
 
 	public:
-		Iterator<DataType>& operator++() {
+		LLIterator<DataType>& operator++() {
 			if (_reverse) {
 				_ptr = _ptr->_prev;
 			}
@@ -56,7 +59,7 @@ namespace LinkedList2024 {
 			return *this;
 		}
 
-		Iterator<DataType>& operator--() {
+		LLIterator<DataType>& operator--() {
 			if (_reverse) {
 				_ptr = _ptr->_next;
 			}
@@ -66,7 +69,7 @@ namespace LinkedList2024 {
 			return *this;
 		}
 
-		bool operator!=(const Iterator &other) const {
+		bool operator!=(const LLIterator &other) const {
 			return _ptr != other._ptr;
 		}
 
@@ -75,6 +78,7 @@ namespace LinkedList2024 {
 		}
 	};
 
+	// the class for the linked list container, the meat of the code
 	template<class DataType>
 	class LinkedList
 	{
@@ -84,20 +88,21 @@ namespace LinkedList2024 {
 		}
 
 		LinkedList() {
-			_first = nullptr;
-			_last = nullptr;
+			_head = nullptr;
+			_tail = nullptr;
 		}
 
+		// move constructor
 		LinkedList(LinkedList<DataType>&& other) {
-			_first = other._first;
-			_last = other._last;
-			other._first = nullptr;
-			other._last = nullptr;
+			_head = other._head;
+			_tail = other._tail;
+			other._head = nullptr;
+			other._tail = nullptr;
 		}
 
 		LinkedList(const std::initializer_list<DataType>& init) {
-			_first = nullptr;
-			_last = nullptr;
+			_head = nullptr;
+			_tail = nullptr;
 
 			operator=(init);
 		}
@@ -110,12 +115,14 @@ namespace LinkedList2024 {
 			return *this;
 		}
 
-		auto insert(Iterator<DataType> it, DataType&& data) {
+		// insert by move
+		auto insert(LLIterator<DataType> it, DataType&& data) {
 			auto* n = new Node<DataType>(std::move(data));
 			return _insert(it, n);
 		}
 
-		auto insert(Iterator<DataType> it, const DataType& data) {
+		// insert copy by reference
+		auto insert(LLIterator<DataType> it, const DataType& data) {
 			auto* n = new Node<DataType>(data);
 			return _insert(it, n);
 		}
@@ -136,27 +143,29 @@ namespace LinkedList2024 {
 			return insert(end(), data);
 		}
 
+		// clear everything in the list
 		void clear() {
-			while(_first != nullptr) {
-				auto p = _first;
-				_first = p->_next;
+			while(_head != nullptr) {
+				auto p = _head;
+				_head = p->_next;
 				delete p;
 			}
-			_last = nullptr;
+			_tail = nullptr;
 		}
 
-		auto erase(Iterator<DataType> it) {
+		// erase 1 item by iterator
+		auto erase(LLIterator<DataType> it) {
 			Node<DataType>* n = it._ptr;
 			assert(n != nullptr);
 			++it;
 			auto prev = n->_prev;
 			auto next = n->_next;
 
-			if (_first == n) {
-				_first = next;
+			if (_head == n) {
+				_head = next;
 			}
-			if (_last == n) {
-				_last = prev;
+			if (_tail == n) {
+				_tail = prev;
 			}
 			if (prev != nullptr) {
 				prev->_next = next;
@@ -169,8 +178,9 @@ namespace LinkedList2024 {
 			return it;
 		}
 
-		Iterator<DataType> find_first(const DataType& val) const {
-			for (Iterator<DataType> it = begin(); it != end(); ++it) {
+		// return iterator of first item matching value
+		LLIterator<DataType> find_first(const DataType& val) const {
+			for (LLIterator<DataType> it = begin(); it != end(); ++it) {
 				if (*it == val) {
 					return it;
 				}
@@ -186,33 +196,35 @@ namespace LinkedList2024 {
 			return erase(rend());
 		}
 
-		Iterator<DataType> begin() const {
-			return Iterator<DataType>(_first);
+		LLIterator<DataType> begin() const {
+			return LLIterator<DataType>(_head);
 		}
 
-		Iterator<DataType> end() const {
-			return Iterator<DataType>(nullptr);
+		LLIterator<DataType> end() const {
+			return LLIterator<DataType>(nullptr);
 		}
 
-		Iterator<DataType> rbegin() const {
-			return Iterator<DataType>(nullptr, true);
+		// reverse iterator starting from beginning
+		LLIterator<DataType> rbegin() const {
+			return LLIterator<DataType>(nullptr, true);
 		}
 
-		Iterator<DataType> rend() const {
-			return Iterator<DataType>(_last, true);
+		// reverse iterator starting from the beginning
+		LLIterator<DataType> rend() const {
+			return LLIterator<DataType>(_tail, true);
 		}
 
     private:
-        Node<DataType>* _first, * _last;
+        Node<DataType>* _head, * _tail;
 
-        auto _insert(const Iterator<DataType>& it, Node<DataType>* n) {
+        auto _insert(const LLIterator<DataType>& it, Node<DataType>* n) {
             assert(n != nullptr);
 
             auto ptr = it._ptr;
 
             if (it._reverse && ptr == nullptr) {
                 n->_prev = nullptr;
-                n->_next = _first;
+                n->_next = _head;
             }
             else if (it._reverse && ptr != nullptr) {
                 n->_prev = ptr->_prev;
@@ -224,16 +236,16 @@ namespace LinkedList2024 {
             }
             else {
                 // ptr is null, this is for push_back
-                n->_prev = _last;
+                n->_prev = _tail;
                 n->_next = nullptr;
             }
 
             if (n->_prev == nullptr) {
-                _first = n;
-                _last = n;
+                _head = n;
+                _tail = n;
             }
-            else if (n->_prev == _last) {
-                _last = n;
+            else if (n->_prev == _tail) {
+                _tail = n;
             }
             if (n->_prev != nullptr) {
                 n->_prev->_next = n;
@@ -241,7 +253,7 @@ namespace LinkedList2024 {
             if (n->_next != nullptr) {
                 n->_next->_prev = n;
             }
-            return Iterator<DataType>(n);
+            return LLIterator<DataType>(n);
         }
 	};
 

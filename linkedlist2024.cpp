@@ -11,6 +11,7 @@ using namespace std;
 using namespace LinkedList2024;
 
 // wasn't sure if 3rd party libraries are allowed, so I didn't want to use a testing library
+
 template<class DataType>
 void test_list(const LinkedList<DataType>& list, const initializer_list<DataType>& expected) {
 	int i = 0;
@@ -29,6 +30,7 @@ void test_list(const LinkedList<DataType>& list, const initializer_list<DataType
 	assert(e == expected.end());
 }
 
+// this class tests for memory leaks by keeping track of the number of constructions and destructions
 class TestMemoryLeaks
 {
 public:
