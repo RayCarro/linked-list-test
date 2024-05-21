@@ -1,0 +1,16 @@
+name: commit
+on:
+  push
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: cmake
+      - run: make
+      - run: make test
